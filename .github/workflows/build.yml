@@ -1,0 +1,55 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-linux:
+    name: build-linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    - name: MakeDir
+      run: mkdir dist
+    - name: Install dependencies
+      run: go mod tidy
+    - name: Build
+      run: go build -o dist/toolbox
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: toolbox-linux
+        path: ./dist
+
+  build-windows:
+    name: build-windows
+    runs-on: windows-2019
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - name: MakeDir
+        run: mkdir dist
+      - name: Install Dependencies
+        run: go mod tidy
+      - name: Build
+        run: go build -o dist/toolbox.exe
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: toolbox-windows
+          path: ./dist
